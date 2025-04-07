@@ -13,7 +13,7 @@
     }
   ],
   "env": {
-    "MONGO_URI": "@mongo_uri", 
+    "MONGO_URI": "mongodb+srv://naziya:wvUfuGUHt26GYPd@cluster0.oswlq.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0", 
     "PORT": "5000"
   }
 }
