@@ -55,6 +55,11 @@ app.post('/upload', upload.single('file'), (req, res) => {
         .then(() => res.status(201).json({ message: 'File uploaded successfully' }))
         .catch(err => res.status(500).json({ error: err.message }));
 });
+// Define a root route
+app.get('/', (req, res) => {
+    res.send('Welcome to the File upload with multer of backend!');
+  });
+  
 
 // Retrieve files route
 app.get('/files', (req, res) => {
