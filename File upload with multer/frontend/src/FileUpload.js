@@ -1,49 +1,86 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import './FileUpload.css';
+
 
 function FileUpload() {
   const [files, setFiles] = useState([]);
   const [message, setMessage] = useState('');
+  const [apiUrl, setApiUrl] = useState('');
 
-  const API_URL = process.env.VITE_API_URL || 'http://localhost:5000';
+  useEffect(() => {
+    // Get API URL from environment variable
+    const envUrl = process.env.VITE_API_URL;
+    if (envUrl) {
+      setApiUrl(envUrl);
+    } else {
+      // Fallback to localhost if no environment variable
+      setApiUrl('http://localhost:5000');
+    }
+  }, []);
 
   const fetchFiles = async () => {
+    if (!apiUrl) {
+      setMessage('API URL not configured');
+      return;
+    }
     try {
-      const response = await axios.get(`${API_URL}/files`);
+      const response = await axios.get(`${apiUrl}/files`);
       setFiles(response.data);
     } catch (error) {
       console.error('Error fetching files:', error);
-      setMessage('Error fetching files');
+      setMessage('Error fetching files: ' + error.message);
     }
   };
 
   const handleFileUpload = async (event) => {
     event.preventDefault();
     const formData = new FormData();
-    formData.append('file', event.target.file.files[0]);
+    const fileInput = event.target.querySelector('input[type="file"]');
+    
+    if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
+      setMessage('Please select a file first');
+      return;
+    }
+
+    formData.append('file', fileInput.files[0]);
+
+    if (!apiUrl) {
+      setMessage('API URL not configured');
+      return;
+    }
 
     try {
-      const response = await axios.post(`${API_URL}/upload`, formData);
+      await axios.post(`${apiUrl}/upload`, formData);
       setMessage('File uploaded successfully!');
       fetchFiles();
     } catch (error) {
-      console.error('Error:', error);
-      setMessage(error.response ? error.response.data : 'Error uploading file.');
+      console.error('Error uploading file:', error);
+      setMessage('Error uploading file: ' + error.message);
     }
   };
 
+  useEffect(() => {
+    fetchFiles();
+  }, [apiUrl]);
+
   return (
-    <div>
+    <div className="file-upload-container">
       <h1>File Upload</h1>
-      <form onSubmit={handleFileUpload}>
-        <input type="file" name="file" required />
-        <button type="submit">Upload</button>
+      {message && <p className="message">{message}</p>}
+      <form onSubmit={handleFileUpload} className="upload-form">
+        <input 
+          type="file" 
+          name="file" 
+          required 
+          className="file-input"
+        />
+        <button type="submit" className="upload-button">Upload</button>
       </form>
-      {message && <p>{message}</p>}
       <h2>Uploaded Files</h2>
-      <ul>
+      <ul className="files-list">
         {files.map(file => (
-          <li key={file._id}>{file.filename}</li>
+          <li key={file._id} className="file-item">{file.filename}</li>
         ))}
       </ul>
     </div>
