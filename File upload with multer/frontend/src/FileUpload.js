@@ -1,7 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
-import './FileUpload.css';
-
 
 function FileUpload() {
   const [files, setFiles] = useState([]);
@@ -9,17 +7,15 @@ function FileUpload() {
   const [apiUrl, setApiUrl] = useState('');
 
   useEffect(() => {
-    // Get API URL from environment variable
     const envUrl = process.env.VITE_API_URL;
     if (envUrl) {
       setApiUrl(envUrl);
     } else {
-      // Fallback to localhost if no environment variable
       setApiUrl('http://localhost:5000');
     }
   }, []);
 
-  const fetchFiles = async () => {
+  const fetchFiles = useCallback(async () => {
     if (!apiUrl) {
       setMessage('API URL not configured');
       return;
@@ -31,7 +27,7 @@ function FileUpload() {
       console.error('Error fetching files:', error);
       setMessage('Error fetching files: ' + error.message);
     }
-  };
+  }, [apiUrl, setMessage, setFiles]);
 
   const handleFileUpload = async (event) => {
     event.preventDefault();
@@ -62,7 +58,7 @@ function FileUpload() {
 
   useEffect(() => {
     fetchFiles();
-  }, [apiUrl]);
+  }, [fetchFiles]); // Now only fetchFiles is needed in dependencies
 
   return (
     <div className="file-upload-container">
