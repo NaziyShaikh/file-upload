@@ -21,12 +21,7 @@ function FileUpload() {
       return;
     }
     try {
-      // Add CORS headers
-      const response = await axios.get(`${apiUrl}/files`, {
-        headers: {
-          'Access-Control-Allow-Origin': '*'
-        }
-      });
+      const response = await axios.get(`${apiUrl}/files`);
       setFiles(response.data);
     } catch (error) {
       console.error('Error fetching files:', error);
@@ -52,13 +47,7 @@ function FileUpload() {
     }
 
     try {
-      // Add CORS headers
-      await axios.post(`${apiUrl}/upload`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          'Access-Control-Allow-Origin': '*'
-        }
-      });
+      await axios.post(`${apiUrl}/upload`, formData);
       setMessage('File uploaded successfully!');
       fetchFiles();
     } catch (error) {
