@@ -21,7 +21,12 @@ function FileUpload() {
       return;
     }
     try {
-      const response = await axios.get(`${apiUrl}/files`);
+      // Add CORS headers
+      const response = await axios.get(`${apiUrl}/files`, {
+        headers: {
+          'Access-Control-Allow-Origin': '*'
+        }
+      });
       setFiles(response.data);
     } catch (error) {
       console.error('Error fetching files:', error);
@@ -47,7 +52,13 @@ function FileUpload() {
     }
 
     try {
-      await axios.post(`${apiUrl}/upload`, formData);
+      // Add CORS headers
+      await axios.post(`${apiUrl}/upload`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Access-Control-Allow-Origin': '*'
+        }
+      });
       setMessage('File uploaded successfully!');
       fetchFiles();
     } catch (error) {
@@ -58,7 +69,7 @@ function FileUpload() {
 
   useEffect(() => {
     fetchFiles();
-  }, [fetchFiles]); // Now only fetchFiles is needed in dependencies
+  }, [fetchFiles]);
 
   return (
     <div className="file-upload-container">

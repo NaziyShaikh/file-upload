@@ -1,24 +1,24 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const multer = require('multer');
-const cors = require('cors'); // Import CORS
+const cors = require('cors');
 const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Enable CORS for all routes
-app.use(cors());
+// Enable CORS for all routes with specific options
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 // MongoDB connection
-const mongoURI = 'mongodb+srv://naziya:wvUfuGUHt26GYPd@cluster0.oswlq.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
-mongoose.connect(mongoURI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-.then(() => console.log('MongoDB connected'))
-.catch(err => console.error('MongoDB connection error:', err));
-
+const mongoURI = process.env.MONGO_URI;
+mongoose.connect(mongoURI)
+  .then(() => console.log('MongoDB connected'))
+  .catch(err => console.error('MongoDB connection error:', err));
 
 // Configure storage
 const storage = multer.diskStorage({
@@ -40,35 +40,37 @@ const fileSchema = new mongoose.Schema({
 
 const File = mongoose.model('File', fileSchema);
 
-// Upload route
-app.post('/upload', upload.single('file'), (req, res) => {
-    if (!req.file) {
-        return res.status(400).send('No file uploaded.');
+// Serve static files from the uploads directory
+app.use('/uploads', express.static('uploads'));
+
+// Routes
+app.post('/upload', upload.single('file'), async (req, res) => {
+    try {
+        const file = new File({
+            filename: req.file.filename,
+            path: req.file.path
+        });
+        await file.save();
+        res.json({ message: 'File uploaded successfully' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
     }
-
-    const newFile = new File({
-        filename: req.file.filename,
-        path: req.file.path
-    });
-
-    newFile.save()
-        .then(() => res.status(201).json({ message: 'File uploaded successfully' }))
-        .catch(err => res.status(500).json({ error: err.message }));
 });
-// Define a root route
-app.get('/', (req, res) => {
-    res.send('Welcome to the File upload with multer of backend!');
-  });
-  
 
-// Retrieve files route
-app.get('/files', (req, res) => {
-    File.find()
-        .then(files => res.json(files))
-        .catch(err => res.status(500).json({ error: err.message }));
+app.get('/files', async (req, res) => {
+    try {
+        const files = await File.find();
+        res.json(files);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.get('/files/:filename', (req, res) => {
+    res.sendFile(path.join(__dirname, 'uploads', req.params.filename));
 });
 
 // Start server
 app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
+    console.log(`Server running on port ${PORT}`);
 });
