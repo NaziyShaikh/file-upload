@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const multer = require('multer');
@@ -7,18 +8,19 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Enable CORS for all routes with specific options
-app.use(cors({
-  origin: '*',
-  methods: ['GET', 'POST'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
+// Enable CORS
+app.use(cors());
 
 // MongoDB connection
 const mongoURI = process.env.MONGO_URI;
+if (!mongoURI) {
+    console.error('MongoDB URI not configured in environment variables');
+    process.exit(1);
+}
+
 mongoose.connect(mongoURI)
-  .then(() => console.log('MongoDB connected'))
-  .catch(err => console.error('MongoDB connection error:', err));
+    .then(() => console.log('MongoDB connected'))
+    .catch(err => console.error('MongoDB connection error:', err));
 
 // Configure storage
 const storage = multer.diskStorage({

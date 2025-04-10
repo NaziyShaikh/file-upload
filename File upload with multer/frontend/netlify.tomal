@@ -1,0 +1,12 @@
+[build]
+  base = "/"
+  publish = "build"
+  command = "npm run build"
+
+[build.environment]
+  VITE_API_URL = "https://using-multer-file-upload-naziya-shaikhs-projects.vercel.app"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
