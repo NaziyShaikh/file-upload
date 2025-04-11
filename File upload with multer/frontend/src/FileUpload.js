@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import  './FileUpload.css';
+import './FileUpload.css';
 
 function FileUpload() {
   const [files, setFiles] = useState([]);
@@ -46,40 +46,54 @@ function FileUpload() {
     }
   };
 
+  const handleFileSelect = (e) => {
+    const file = e.target.files[0];
+    setSelectedFile(file);
+    setMessage('');
+  };
+
   return (
-    <div className="container mt-5">
-      <h2>File Upload</h2>
-      <div className="card">
-        <div className="card-body">
-          <form onSubmit={handleFileUpload}>
-            <div className="mb-3">
-              <input
-                type="file"
-                className="form-control"
-                onChange={(e) => setSelectedFile(e.target.files[0])}
-              />
-            </div>
-            <button type="submit" className="btn btn-primary" disabled={!selectedFile}>
-              Upload File
-            </button>
-          </form>
-          {message && <div className="alert alert-info mt-3">{message}</div>}
-          
-          <hr />
-          <h4>Uploaded Files</h4>
-          <div className="list-group">
-            {files.map((file) => (
+    <div className="file-upload-container">
+      <div className="file-upload-card">
+        <h2>File Upload</h2>
+        <div className="file-input-container">
+          <label className="custom-file-upload">
+            Select File
+            <input
+              type="file"
+              className="file-input"
+              onChange={handleFileSelect}
+            />
+          </label>
+        </div>
+        <button 
+          type="submit" 
+          className="upload-button" 
+          onClick={handleFileUpload}
+          disabled={!selectedFile}
+        >
+          Upload File
+        </button>
+        {message && (
+          <div className={`message ${message.includes('Error') ? 'error' : 'success'}`}>
+            {message}
+          </div>
+        )}
+        
+        <div className="files-grid">
+          {files.map((file) => (
+            <div key={file._id} className="file-card">
+              <div className="file-name">{file.filename}</div>
               <a
-                key={file._id}
                 href={`${process.env.REACT_APP_API_URL}/files/${file.filename}`}
-                className="list-group-item list-group-item-action"
+                className="file-download"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                {file.filename}
+                Download
               </a>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>
