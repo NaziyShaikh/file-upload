@@ -59,6 +59,29 @@ app.post('/upload', upload.single('file'), async (req, res) => {
     }
 });
 
+
+app.delete('/files/:filename', async (req, res) => {
+    try {
+        const filename = req.params.filename;
+        const file = await File.findOneAndDelete({ filename });
+        
+        if (!file) {
+            return res.status(404).json({ error: 'File not found' });
+        }
+
+        // Delete file from uploads directory
+        const filePath = path.join(__dirname, 'uploads', filename);
+        if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath);
+        }
+
+        res.json({ message: 'File deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting file:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
 app.get('/files', async (req, res) => {
     try {
         const files = await File.find();
@@ -67,6 +90,8 @@ app.get('/files', async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
+
+
 
 app.get('/files/:filename', (req, res) => {
     res.sendFile(path.join(__dirname, 'uploads', req.params.filename));

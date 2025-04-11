@@ -52,6 +52,20 @@ function FileUpload() {
     setMessage('');
   };
 
+  const handleDeleteFile = async (filename) => {
+    try {
+      const confirmDelete = window.confirm('Are you sure you want to delete this file?');
+      if (!confirmDelete) return;
+
+      await axios.delete(`${process.env.REACT_APP_API_URL}/files/${filename}`);
+      setMessage('File deleted successfully');
+      fetchFiles();
+    } catch (error) {
+      console.error('Error deleting file:', error);
+      setMessage('Error deleting file: ' + error.message);
+    }
+  };
+
   return (
     <div className="file-upload-container">
       <div className="file-upload-card">
@@ -84,14 +98,22 @@ function FileUpload() {
           {files.map((file) => (
             <div key={file._id} className="file-card">
               <div className="file-name">{file.filename}</div>
-              <a
-                href={`${process.env.REACT_APP_API_URL}/files/${file.filename}`}
-                className="file-download"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Download
-              </a>
+              <div className="file-actions">
+                <a
+                  href={`${process.env.REACT_APP_API_URL}/files/${file.filename}`}
+                  className="file-download"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Download
+                </a>
+                <button
+                  className="file-delete"
+                  onClick={() => handleDeleteFile(file.filename)}
+                >
+                  Delete
+                </button>
+              </div>
             </div>
           ))}
         </div>

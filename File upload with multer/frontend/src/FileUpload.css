@@ -120,3 +120,30 @@
 .file-download:hover {
   background: #2980b9;
 }
+
+.file-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.file-delete {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.3s ease;
+}
+
+.file-delete:hover {
+  background: #c0392b;
+}
+
+.file-delete:disabled {
+  background: #95a5a6;
+  cursor: not-allowed;
+}
