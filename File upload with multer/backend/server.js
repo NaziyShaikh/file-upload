@@ -71,15 +71,15 @@ app.get('/files', async (req, res) => {
 app.get('/files/:filename', (req, res) => {
     res.sendFile(path.join(__dirname, 'uploads', req.params.filename));
 });
-
-// Start server
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
-
 // Routes
 app.get('/', (req, res) => {
     res.json({ message: 'Welcome to the file uploading of multer'
         
      });
 });
+
+// Start server
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+});
+
