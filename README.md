@@ -1,6 +1,6 @@
 the  deploy backend link https://file-upload-3-46jr.onrender.com/
 
-frontend depoly link https://cheerful-salmiakki-7345f0.netlify.app
+frontend depoly link https://file-upload-4-kive.onrender.com/
 
 git hub backend repo link https://github.com/NaziyShaikh/file-upload/tree/master/File%20upload%20with%20multer/backend
 
