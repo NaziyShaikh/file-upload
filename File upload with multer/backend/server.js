@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const multer = require('multer');
 const cors = require('cors');
 const path = require('path');
+const fs = require('fs'); // Add this line to import fs module
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -63,6 +64,8 @@ app.post('/upload', upload.single('file'), async (req, res) => {
 app.delete('/files/:filename', async (req, res) => {
     try {
         const filename = req.params.filename;
+        
+        // First delete from database
         const file = await File.findOneAndDelete({ filename });
         
         if (!file) {
@@ -71,8 +74,15 @@ app.delete('/files/:filename', async (req, res) => {
 
         // Delete file from uploads directory
         const filePath = path.join(__dirname, 'uploads', filename);
-        if (fs.existsSync(filePath)) {
-            fs.unlinkSync(filePath);
+        
+        try {
+            // Check if file exists and delete it
+            if (fs.existsSync(filePath)) {
+                await fs.promises.unlink(filePath);
+            }
+        } catch (fileError) {
+            console.error(`Error deleting file from disk: ${fileError.message}`);
+            // Continue even if file deletion fails - we want to remove it from database
         }
 
         res.json({ message: 'File deleted successfully' });
@@ -107,4 +117,3 @@ app.get('/', (req, res) => {
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
-
