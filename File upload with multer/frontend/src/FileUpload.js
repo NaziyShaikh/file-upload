@@ -22,6 +22,8 @@ function FileUpload() {
     }
   };
 
+  //here i got errors when i try to upload some times it not take 
+
   const handleFileUpload = async (event) => {
     event.preventDefault();
     const formData = new FormData();
@@ -51,6 +53,8 @@ function FileUpload() {
     setSelectedFile(file);
     setMessage('');
   };
+
+  //added delete function to to page to delete unwated file also personal
 
   const handleDeleteFile = async (filename) => {
     try {
@@ -111,7 +115,7 @@ function FileUpload() {
                   className="file-delete"
                   onClick={() => handleDeleteFile(file.filename)}
                 >
-                  Delete
+                  Delete(cut karo ise )
                 </button>
               </div>
             </div>
