@@ -13,15 +13,25 @@
   text-align: center;
   font-size: 14px;
   z-index: 1000;
-  animation: moveText 15s linear infinite;
+  animation: fadeInOut 10s linear infinite;
 }
 
-@keyframes moveText {
+@keyframes fadeInOut {
   0% {
-    transform: translateX(100%);
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  5% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  95% {
+    opacity: 1;
+    transform: translateY(0);
   }
   100% {
-    transform: translateX(-100%);
+    opacity: 0;
+    transform: translateY(20px);
   }
 }
 
